@@ -133,7 +133,7 @@ async function analyzeContent(content, label) {
     ...(shouldRun("heading-order") ? headingOrder(content, label) : []),
     ...(shouldRun("heading-empty") ? headingEmpty(content, label) : []),
     ...(shouldRun("link-new-tab-warning")
-      ? linksOpenNewTab(content, label)
+      ? linksOpenNewTab(content, label, config)
       : []),
   ];
 
@@ -184,7 +184,7 @@ async function analyzeContent(content, label) {
         ...(shouldRun("heading-order") ? headingOrder(content, file) : []),
         ...(shouldRun("heading-empty") ? headingEmpty(content, file) : []),
         ...(shouldRun("link-new-tab-warning")
-          ? linksOpenNewTab(content, file)
+          ? linksOpenNewTab(content, file, config)
           : [])
         // ...(shouldRun("missing-landmark") ? landmarkRoles(content, file) : []),
       );
