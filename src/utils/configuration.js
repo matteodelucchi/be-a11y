@@ -16,11 +16,13 @@ module.exports = function configuration(configFile) {
     config.rules = {};
     config.allowedExtensions = {};
     config.excludedDirs = {};
+    config.excludedFiles = {};
   }
 
   config.rules ??= {};
   config.allowedExtensions ??= {};
   config.excludedDirs ??= {};
+  config.excludedFiles ??= {};
 
   return config;
 }

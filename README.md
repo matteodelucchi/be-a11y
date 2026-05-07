@@ -147,6 +147,14 @@ jobs:
     "aria-role-invalid": true,
     "missing-landmark": false,
     "contrast": true
+  },
+  "excludedDirs": {
+    "dist": true,
+    "node_modules": true
+  },
+  "excludedFiles": {
+    "email-template.html": true,
+    "legacy/header.twig": true
   }
 }
 ```

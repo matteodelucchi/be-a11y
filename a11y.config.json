@@ -83,5 +83,8 @@
     "time",
     "toolbar",
     "tooltip"
-  ]
+  ],
+  "excludedFiles": {
+    "package-lock.json": true
+  }
 }

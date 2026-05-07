@@ -24,8 +24,11 @@ const unlabeledInputs = require("./src/rules/unlabeledInputs");
 const configuration = require("./src/utils/configuration");
 const { printErrors, printSummary } = require("./src/utils/logger");
 
+let config = configuration("a11y.config.json");
+
 const allowedExtensions = Object.keys(config.allowedExtensions || {});
 const excludedDirs = Object.keys(config.excludedDirs || {});
+const excludedFiles = Object.keys(config.excludedFiles || {});
 
 // If running in GitHub Actions, use @actions/core to get inputs
 let input, outputJson;
@@ -42,7 +45,6 @@ if (!input) {
   }
 }
 
-let config = configuration("a11y.config.json");
 
 if (!input) {
   console.error(
@@ -65,14 +67,20 @@ const shouldRun = (rule) => config.rules[rule] !== false;
  * @param {string} dir - Directory path to search.
  * @returns {string[]} Array of matched file paths.
  */
-function findFiles(dir) {
+function findFiles(dir, baseDir = dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   return entries.flatMap((entry) => {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       if (excludedDirs.includes(entry.name)) return [];
-      return findFiles(fullPath);
+      return findFiles(fullPath, baseDir);
     }
+
+    const relativePath = path.relative(baseDir, fullPath);
+    if (excludedFiles.includes(entry.name) || excludedFiles.includes(relativePath)) {
+      return [];
+    }
+
     if (allowedExtensions.includes(path.extname(entry.name))) return [fullPath];
     return [];
   });
