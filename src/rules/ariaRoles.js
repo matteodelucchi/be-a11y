@@ -9,7 +9,7 @@ const getLineNumber = require("../utils/getLineNumber");
  * @param {*} file
  * @returns
  */
-module.exports = function ariaRoles(content, file) {
+module.exports = function ariaRoles(content, file, config = {}) {
   const $ = cheerio.load(content);
   const errors = [];
 
@@ -19,21 +19,49 @@ module.exports = function ariaRoles(content, file) {
     const tagIndex = content.indexOf(html);
     const lineNumber = getLineNumber(content, tagIndex);
 
-    // ... extend this list as needed
-    const allowedRoles = [
-      "button",
-      "checkbox",
-      "dialog",
-      "link",
-      "listbox",
-      "menu",
-      "navigation",
-      "progressbar",
-      "radio",
-      "slider",
-      "tab",
+    const defaultAllowedRoles = [
+      "application",
+      "article",
+      "blockquote",
+      "caption",
+      "cell",
+      "code",
+      "columnheader",
+      "definition",
+      "deletion",
+      "directory",
+      "document",
+      "emphasis",
+      "feed",
+      "figure",
+      "generic",
+      "group",
+      "heading",
+      "insertion",
       "img",
+      "list",
+      "listitem",
+      "mark",
+      "math",
+      "none",
+      "note",
+      "presentation",
+      "paragraph",
+      "row",
+      "rowgroup",
+      "rowheader",
+      "separator",
+      "strong",
+      "subscript",
+      "superscript",
+      "table",
+      "term",
+      "time",
+      "toolbar",
+      "tooltip",
     ];
+
+    const allowedRoles = config.allowedAriaRoles || defaultAllowedRoles;
 
     if (!allowedRoles.includes(role)) {
       errors.push({

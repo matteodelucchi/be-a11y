@@ -123,7 +123,7 @@ async function analyzeContent(content, label) {
     ...(shouldRun("aria-invalid") ? ariaLabels(content, label) : []),
     ...(shouldRun("missing-aria") ? missingAria(content, label) : []),
     ...(shouldRun("contrast") ? contrast(content, label) : []),
-    ...(shouldRun("aria-role-invalid") ? ariaRoles(content, label) : []),
+    ...(shouldRun("aria-role-invalid") ? ariaRoles(content, label, config) : []),
     ...(shouldRun("missing-landmark") ? landmarkRoles(content, label) : []),
     ...(shouldRun("label-missing-for") ? labelsWithoutFor(content, label) : []),
     ...(shouldRun("input-unlabeled") ? unlabeledInputs(content, label) : []),
@@ -171,7 +171,7 @@ async function analyzeContent(content, label) {
         ...(shouldRun("aria-invalid") ? ariaLabels(content, file) : []),
         ...(shouldRun("missing-aria") ? missingAria(content, file) : []),
         ...(shouldRun("contrast") ? contrast(content, file) : []),
-        ...(shouldRun("aria-role-invalid") ? ariaRoles(content, file) : []),
+        ...(shouldRun("aria-role-invalid") ? ariaRoles(content, file, config) : []),
         ...(shouldRun("label-missing-for")
           ? labelsWithoutFor(content, file)
           : []),
