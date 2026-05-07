@@ -24,27 +24,8 @@ const unlabeledInputs = require("./src/rules/unlabeledInputs");
 const configuration = require("./src/utils/configuration");
 const { printErrors, printSummary } = require("./src/utils/logger");
 
-const allowedExtensions = [
-  ".latte",
-  ".html",
-  ".php",
-  ".twig",
-  ".edge",
-  ".tsx",
-  ".jsx",
-];
-
-const excludedDirs = [
-  "node_modules",
-  "vendor",
-  "dist",
-  "build",
-  "temp",
-  ".idea",
-  ".git",
-  "log",
-  "bin",
-];
+const allowedExtensions = Object.keys(config.allowedExtensions || {});
+const excludedDirs = Object.keys(config.excludedDirs || {});
 
 // If running in GitHub Actions, use @actions/core to get inputs
 let input, outputJson;
