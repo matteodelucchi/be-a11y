@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const getLineNumber = require("../utils/getLineNumber");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Checks for invalid or missing values in `aria-label` and `aria-labelledby`.
@@ -7,11 +8,13 @@ const getLineNumber = require("../utils/getLineNumber");
  *
  * @param {string} content - HTML content.
  * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang property.
  * @returns {object[]} List of ARIA label errors.
  */
-module.exports = function ariaLabels(content, file) {
+module.exports = function ariaLabels(content, file, config = { lang: "en" }) {
   const $ = cheerio.load(content);
   const errors = [];
+  const lang = config.lang || "en";
 
   $("[aria-label], [aria-labelledby]").each((_, el) => {
     const html = $.html(el);
@@ -23,7 +26,7 @@ module.exports = function ariaLabels(content, file) {
         file,
         line: lineNumber,
         type: "aria-invalid",
-        message: `aria-label is empty`,
+        message: getMessage("aria-invalid", lang),
       });
     }
 
@@ -34,7 +37,7 @@ module.exports = function ariaLabels(content, file) {
           file,
           line: lineNumber,
           type: "aria-invalid",
-          message: `aria-labelledby references a non-existent ID: ${id}`,
+          message: getMessage("aria-invalid-ref", lang, { id }),
         });
       }
     }

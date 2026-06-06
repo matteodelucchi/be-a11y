@@ -23,6 +23,7 @@ const unlabeledInputs = require("./src/rules/unlabeledInputs");
 // Utils
 const configuration = require("./src/utils/configuration");
 const { printErrors, printSummary } = require("./src/utils/logger");
+const { detectLanguage, getLanguage } = require("./src/utils/language");
 
 let config = configuration("a11y.config.json");
 
@@ -101,28 +102,38 @@ function exportToJson(errors, outputPath) {
 }
 
 /**
+ * Detect language for content and get appropriate language code.
+ * @param {string} content - HTML content string.
+ * @returns {string} Language code (e.g., "en", "de").
+ */
+function detectContentLanguage(content) {
+  return getLanguage(content, config.language);
+}
+
+/**
  * Runs all accessibility checks on a single HTML content string.
  * Used for analyzing remote HTML via URL input.
  * @param {string} content - Raw HTML string.
  * @param {string} label - Display name (usually file path or URL).
  */
 async function analyzeContent(content, label) {
+  const lang = detectContentLanguage(content);
   const errors = [
-    ...(shouldRun("alt-attributes") ? altAttributes(content, label) : []),
-    ...(shouldRun("aria-invalid") ? ariaLabels(content, label) : []),
-    ...(shouldRun("missing-aria") ? missingAria(content, label) : []),
-    ...(shouldRun("contrast") ? contrast(content, label) : []),
-    ...(shouldRun("aria-role-invalid") ? ariaRoles(content, label, config) : []),
-    ...(shouldRun("missing-landmark") ? landmarkRoles(content, label) : []),
-    ...(shouldRun("label-missing-for") ? labelsWithoutFor(content, label) : []),
-    ...(shouldRun("input-unlabeled") ? unlabeledInputs(content, label) : []),
-    ...(shouldRun("empty-link") ? emptyLinks(content, label) : []),
-    ...(shouldRun("iframe-title-missing") ? iframeTitles(content, label) : []),
-    ...(shouldRun("multiple-h1") ? multipleH1(content, label) : []),
-    ...(shouldRun("heading-order") ? headingOrder(content, label) : []),
-    ...(shouldRun("heading-empty") ? headingEmpty(content, label) : []),
+    ...(shouldRun("alt-attributes") ? altAttributes(content, label, { ...config, lang }) : []),
+    ...(shouldRun("aria-invalid") ? ariaLabels(content, label, { ...config, lang }) : []),
+    ...(shouldRun("missing-aria") ? missingAria(content, label, { ...config, lang }) : []),
+    ...(shouldRun("contrast") ? contrast(content, label, { ...config, lang }) : []),
+    ...(shouldRun("aria-role-invalid") ? ariaRoles(content, label, { ...config, lang }) : []),
+    ...(shouldRun("missing-landmark") ? landmarkRoles(content, label, { ...config, lang }) : []),
+    ...(shouldRun("label-missing-for") ? labelsWithoutFor(content, label, { ...config, lang }) : []),
+    ...(shouldRun("input-unlabeled") ? unlabeledInputs(content, label, { ...config, lang }) : []),
+    ...(shouldRun("empty-link") ? emptyLinks(content, label, { ...config, lang }) : []),
+    ...(shouldRun("iframe-title-missing") ? iframeTitles(content, label, { ...config, lang }) : []),
+    ...(shouldRun("multiple-h1") ? multipleH1(content, label, { ...config, lang }) : []),
+    ...(shouldRun("heading-order") ? headingOrder(content, label, { ...config, lang }) : []),
+    ...(shouldRun("heading-empty") ? headingEmpty(content, label, { ...config, lang }) : []),
     ...(shouldRun("link-new-tab-warning")
-      ? linksOpenNewTab(content, label, config)
+      ? linksOpenNewTab(content, label, { ...config, lang })
       : []),
   ];
 
@@ -152,30 +163,31 @@ async function analyzeContent(content, label) {
 
     for (const file of files) {
       const content = fs.readFileSync(file, "utf-8");
+      const lang = detectContentLanguage(content);
 
       allErrors.push(
         ...(shouldRun("alt-attributes")
-          ? altAttributes(content, file, config)
+          ? altAttributes(content, file, { ...config, lang })
           : []),
-        ...(shouldRun("aria-invalid") ? ariaLabels(content, file) : []),
-        ...(shouldRun("missing-aria") ? missingAria(content, file) : []),
-        ...(shouldRun("contrast") ? contrast(content, file) : []),
-        ...(shouldRun("aria-role-invalid") ? ariaRoles(content, file, config) : []),
+        ...(shouldRun("aria-invalid") ? ariaLabels(content, file, { ...config, lang }) : []),
+        ...(shouldRun("missing-aria") ? missingAria(content, file, { ...config, lang }) : []),
+        ...(shouldRun("contrast") ? contrast(content, file, { ...config, lang }) : []),
+        ...(shouldRun("aria-role-invalid") ? ariaRoles(content, file, { ...config, lang }) : []),
         ...(shouldRun("label-missing-for")
-          ? labelsWithoutFor(content, file)
+          ? labelsWithoutFor(content, file, { ...config, lang })
           : []),
-        ...(shouldRun("input-unlabeled") ? unlabeledInputs(content, file) : []),
-        ...(shouldRun("empty-link") ? emptyLinks(content, file) : []),
+        ...(shouldRun("input-unlabeled") ? unlabeledInputs(content, file, { ...config, lang }) : []),
+        ...(shouldRun("empty-link") ? emptyLinks(content, file, { ...config, lang }) : []),
         ...(shouldRun("iframe-title-missing")
-          ? iframeTitles(content, file)
+          ? iframeTitles(content, file, { ...config, lang })
           : []),
-        ...(shouldRun("multiple-h1") ? multipleH1(content, file) : []),
-        ...(shouldRun("heading-order") ? headingOrder(content, file) : []),
-        ...(shouldRun("heading-empty") ? headingEmpty(content, file) : []),
+        ...(shouldRun("multiple-h1") ? multipleH1(content, file, { ...config, lang }) : []),
+        ...(shouldRun("heading-order") ? headingOrder(content, file, { ...config, lang }) : []),
+        ...(shouldRun("heading-empty") ? headingEmpty(content, file, { ...config, lang }) : []),
         ...(shouldRun("link-new-tab-warning")
-          ? linksOpenNewTab(content, file, config)
+          ? linksOpenNewTab(content, file, { ...config, lang })
           : [])
-        // ...(shouldRun("missing-landmark") ? landmarkRoles(content, file) : []),
+        // ...(shouldRun("missing-landmark") ? landmarkRoles(content, file, { ...config, lang }) : []),
       );
     }
 

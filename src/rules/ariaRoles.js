@@ -1,17 +1,20 @@
 const cheerio = require("cheerio");
 const getLineNumber = require("../utils/getLineNumber");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Rule to validate correct usage of ARIA roles
  * (e.g., role="button" on non-interactive tags like <div> without a tabindex and click handler is misleading).
  *
- * @param {*} content
- * @param {*} file
- * @returns
+ * @param {string} content - HTML content.
+ * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang and allowedAriaRoles properties.
+ * @returns {object[]} List of ARIA role errors.
  */
-module.exports = function ariaRoles(content, file, config = {}) {
+module.exports = function ariaRoles(content, file, config = { lang: "en" }) {
   const $ = cheerio.load(content);
   const errors = [];
+  const lang = config.lang || "en";
 
   $("[role]").each((_, el) => {
     const role = $(el).attr("role");
@@ -68,7 +71,7 @@ module.exports = function ariaRoles(content, file, config = {}) {
         file,
         line: lineNumber,
         type: "aria-role-invalid",
-        message: `Unrecognized or inappropriate ARIA role: "${role}"`,
+        message: getMessage("aria-role-invalid", lang, { role }),
       });
     }
   });

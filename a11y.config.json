@@ -1,4 +1,6 @@
 {
+  "language": null,
+  "altMaxLength": 125,
   "rules": {
     "heading-order": true,
     "heading-empty": true,
@@ -40,8 +42,8 @@
   "newTabNoticePatterns": [
     "opens in a new tab",
     "opens in new window",
-    "\u00f6ffnet in neuem Tab",
-    "\u00f6ffnet in neuem Fenster"
+    "öffnet in neuem Tab",
+    "öffnet in neuem Fenster"
   ],
   "allowedAriaRoles": [
     "application",

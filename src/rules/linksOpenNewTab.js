@@ -1,16 +1,19 @@
 const cheerio = require("cheerio");
 const getLineNumber = require("../utils/getLineNumber");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Checks if links opening in a new tab/window notify screen readers.
  *
  * @param {string} content - HTML content.
  * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang property.
  * @returns {object[]} List of new tab warning issues.
  */
-module.exports = function linksOpenNewTab(content, file, config = {}) {
+module.exports = function linksOpenNewTab(content, file, config = { lang: "en" }) {
   const $ = cheerio.load(content);
   const errors = [];
+  const lang = config.lang || "en";
 
   $("a[target='_blank']").each((_, el) => {
     const $el = $(el);
@@ -22,8 +25,8 @@ module.exports = function linksOpenNewTab(content, file, config = {}) {
     const newTabNoticePatterns = (config.newTabNoticePatterns || [
       "opens in a new tab",
       "opens in new window",
-      "öffnet in neuem tab",
-      "öffnet in neuem fenster",
+      "öffnet in neuem Tab",
+      "öffnet in neuem Fenster",
     ]).map((pattern) => pattern.toLowerCase());
 
     const hasScreenReaderNote = $el
@@ -42,7 +45,7 @@ module.exports = function linksOpenNewTab(content, file, config = {}) {
         file,
         line: lineNumber,
         type: "link-new-tab-warning",
-        message: `<a> with target="_blank" should inform users it opens in a new tab (e.g., via aria-label or screen reader note)`,
+        message: getMessage("link-new-tab-warning", lang),
       });
     }
   });

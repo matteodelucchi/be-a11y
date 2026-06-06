@@ -1,4 +1,5 @@
 const cheerio = require("cheerio");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Verifies the presence of at least one semantic landmark element.
@@ -6,10 +7,12 @@ const cheerio = require("cheerio");
  *
  * @param {string} content - HTML content.
  * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang property.
  * @returns {object[]} List containing missing landmark error, if any.
  */
-module.exports = function landmarkRoles(content, file) {
+module.exports = function landmarkRoles(content, file, config = { lang: "en" }) {
   const $ = cheerio.load(content);
+  const lang = config.lang || "en";
   const landmarks = ["main", "nav", "header", "footer", "aside"];
   const errors = [];
 
@@ -19,7 +22,7 @@ module.exports = function landmarkRoles(content, file) {
       file,
       line: 1,
       type: "missing-landmark",
-      message: "No landmark elements (main, nav, header, footer, aside) found",
+      message: getMessage("missing-landmark", lang),
     });
   }
 

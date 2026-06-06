@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const getLineNumber = require("../utils/getLineNumber");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Checks that each <label> element is properly associated with a form control.
@@ -8,11 +9,13 @@ const getLineNumber = require("../utils/getLineNumber");
  *
  * @param {string} content - HTML content.
  * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang property.
  * @returns {object[]} List of label association errors.
  */
-module.exports = function labelsWithoutFor(content, file) {
+module.exports = function labelsWithoutFor(content, file, config = { lang: "en" }) {
   const $ = cheerio.load(content);
   const errors = [];
+  const lang = config.lang || "en";
 
   $("label").each((_, el) => {
     const $label = $(el);
@@ -29,7 +32,7 @@ module.exports = function labelsWithoutFor(content, file) {
           file,
           line: lineNumber,
           type: "label-for-missing",
-          message: `<label for="${forAttr}"> does not match any element with that ID`,
+          message: getMessage("label-for-missing", lang, { forAttr }),
         });
       }
     } else {
@@ -40,7 +43,7 @@ module.exports = function labelsWithoutFor(content, file) {
           file,
           line: lineNumber,
           type: "label-missing-for",
-          message: `<label> is not associated with any form control (missing 'for' or nested input)`,
+          message: getMessage("label-missing-for", lang),
         });
       }
     }

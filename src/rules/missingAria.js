@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const getLineNumber = require("../utils/getLineNumber");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Checks if important elements lack visible text or an ARIA label.
@@ -7,11 +8,13 @@ const getLineNumber = require("../utils/getLineNumber");
  *
  * @param {string} content - HTML content.
  * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang property.
  * @returns {object[]} List of missing ARIA label issues.
  */
-module.exports = function missingAria(content, file) {
+module.exports = function missingAria(content, file, config = { lang: "en" }) {
   const $ = cheerio.load(content);
   const errors = [];
+  const lang = config.lang || "en";
 
   const selectors = [
     "button",
@@ -40,7 +43,7 @@ module.exports = function missingAria(content, file) {
         file,
         line: lineNumber,
         type: "missing-aria",
-        message: `<${el.name}> element should have an aria-label or visible text`,
+        message: getMessage("missing-aria", lang, { tag: el.name }),
       });
     }
   });

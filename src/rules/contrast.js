@@ -1,6 +1,7 @@
 const cheerio = require("cheerio");
 const getLineNumber = require("../utils/getLineNumber");
 const tinycolor = require("tinycolor2");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Evaluates inline styles for text/background color contrast ratio.
@@ -8,11 +9,13 @@ const tinycolor = require("tinycolor2");
  *
  * @param {string} content - HTML content.
  * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang property.
  * @returns {object[]} List of contrast issues.
  */
-module.exports = function contrast(content, file) {
+module.exports = function contrast(content, file, config = { lang: "en" }) {
   const $ = cheerio.load(content);
   const errors = [];
+  const lang = config.lang || "en";
 
   $("*").each((_, el) => {
     const style = $(el).attr("style");
@@ -31,8 +34,8 @@ module.exports = function contrast(content, file) {
       const bg = tinycolor(inlineStyles["background-color"]);
 
       if (fg.isValid() && bg.isValid()) {
-        const contrast = tinycolor.readability(bg, fg);
-        if (contrast < 4.5) {
+        const contrastRatio = tinycolor.readability(bg, fg);
+        if (contrastRatio < 4.5) {
           const html = $.html(el);
           const tagIndex = content.indexOf(html);
           const lineNumber = getLineNumber(content, tagIndex);
@@ -40,7 +43,11 @@ module.exports = function contrast(content, file) {
             file,
             line: lineNumber,
             type: "contrast",
-            message: `Low contrast ratio (${contrast.toFixed(2)}): ${inlineStyles["color"]} on ${inlineStyles["background-color"]}`,
+            message: getMessage("contrast", lang, {
+              ratio: contrastRatio.toFixed(2),
+              color: inlineStyles["color"],
+              background: inlineStyles["background-color"],
+            }),
           });
         }
       }

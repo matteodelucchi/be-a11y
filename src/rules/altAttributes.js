@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const getLineNumber = require("../utils/getLineNumber");
+const { getMessage } = require("../utils/i18n");
 
 /**
  * Validates that all <img> tags have appropriate `alt` attributes.
@@ -7,12 +8,15 @@ const getLineNumber = require("../utils/getLineNumber");
  *
  * @param {string} content - HTML content.
  * @param {string} file - File name.
+ * @param {object} config - Configuration object with lang property.
  * @returns {object[]} List of alt attribute errors.
  */
-module.exports = function altAttributes(content, file, config = { rules: {} }) {
+module.exports = function altAttributes(content, file, config = { rules: {}, lang: "en" }) {
   const $ = cheerio.load(content);
   const errors = [];
   const seen = new Set();
+  const lang = config.lang || "en";
+  const altMaxLength = config.altMaxLength || 125;
 
   $("img").each((_, el) => {
     const $el = $(el);
@@ -35,7 +39,7 @@ module.exports = function altAttributes(content, file, config = { rules: {} }) {
         file,
         line: lineNumber,
         type: "missing-alt",
-        message: `<img> tag is missing an alt attribute`,
+        message: getMessage("missing-alt", lang),
       });
       return;
     }
@@ -46,7 +50,7 @@ module.exports = function altAttributes(content, file, config = { rules: {} }) {
         file,
         line: lineNumber,
         type: "alt-decorative-incorrect",
-        message: `Decorative image should have empty alt="" or role="presentation"`,
+        message: getMessage("alt-decorative-incorrect", lang),
       });
       return;
     }
@@ -57,7 +61,7 @@ module.exports = function altAttributes(content, file, config = { rules: {} }) {
         file,
         line: lineNumber,
         type: "alt-functional-empty",
-        message: `Functional image inside <a> or <button> needs descriptive alt text`,
+        message: getMessage("alt-functional-empty", lang),
       });
       return;
     }
@@ -68,17 +72,17 @@ module.exports = function altAttributes(content, file, config = { rules: {} }) {
         file,
         line: lineNumber,
         type: "alt-empty",
-        message: `alt attribute exists but is empty; ensure this is intentional (e.g., decorative image)`,
+        message: getMessage("alt-empty", lang),
       });
     }
 
     // Case 5: alt is too long
-    if (alt.length > 30) {
+    if (alt.length > altMaxLength) {
       errors.push({
         file,
         line: lineNumber,
         type: "alt-too-long",
-        message: `alt attribute exceeds 30 characters (${alt.length} characters)`,
+        message: getMessage("alt-too-long", lang, { maxLength: altMaxLength, length: alt.length }),
       });
     }
 
@@ -94,7 +98,7 @@ module.exports = function altAttributes(content, file, config = { rules: {} }) {
           file,
           line: lineNumber,
           type: "redundant-title",
-          message: `<img> has a 'title' attribute that duplicates its 'alt' text: "${alt}"`,
+          message: getMessage("redundant-title", lang, { alt: alt.trim() }),
         });
       }
     }
