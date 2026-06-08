@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Testseite - ARIA-Labels</title>
+</head>
+<body>
+    <h1>ARIA</h1>
+    
+    <!-- Falsch: leeres aria-label -->
+    <button aria-label="">Speichern</button>
+    
+    <!-- Richtig: gefülltes aria-label -->
+    <button aria-label="Speichern und schließen">Speichern</button>
+    
+    <!-- Falsch: aria-labelledby referenziert nicht existierende ID -->
+    <button aria-labelledby="nonexistent">Löschen</button>
+    
+    <!-- Richtig: aria-labelledby referenziert existierende ID -->
+    <span id="close-label">Schließen</span>
+    <button aria-labelledby="close-label">X</button>
+</body>
+</html>

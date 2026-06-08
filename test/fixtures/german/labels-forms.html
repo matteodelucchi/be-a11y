@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Testseite - Formular-Beschriftungen</title>
+</head>
+<body>
+    <h1>Formular</h1>
+    
+    <!-- Richtig: Label mit for-Attribut -->
+    <label for="name">Name:</label>
+    <input type="text" id="name">
+    
+    <!-- Falsch: Label ohne for-Attribut und ohne verschachteltes Input -->
+    <label>E-Mail:</label>
+    <input type="email" id="email">
+    
+    <!-- Richtig: Label mit verschachteltem Input -->
+    <label>
+        Passwort:
+        <input type="password" id="password">
+    </label>
+    
+    <!-- Falsch: Label mit for-Attribut das nicht existiert -->
+    <label for="nonexistent">Alter:</label>
+    
+    <!-- Richtig: Checkbox mit Label -->
+    <input type="checkbox" id="newsletter">
+    <label for="newsletter">Newsletter abonnieren</label>
+    
+    <!-- Falsch: Checkbox ohne Label -->
+    <input type="checkbox" id="terms">
+</body>
+</html>

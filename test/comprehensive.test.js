@@ -201,9 +201,158 @@ test("german/long-alt-text.html: detects long alt text with German limit", () =>
   assert(errors[0].message.includes("Zeichen"), "Message should be in German");
 });
 
+// Additional German-specific tests
+const headingOrderRule = require("../src/rules/headingOrder");
+const emptyLinksRule = require("../src/rules/emptyLinks");
+const labelsWithoutForRule = require("../src/rules/labelsWithoutFor");
+const ariaLabelsRule = require("../src/rules/ariaLabels");
+const iframeTitlesRule = require("../src/rules/iframeTitles");
+const headingEmptyRule = require("../src/rules/headingEmpty");
+const contrastRule = require("../src/rules/contrast");
+const multipleH1Rule = require("../src/rules/multipleH1");
+
+test("german/heading-order.html: detects heading skip in German", () => {
+  const html = readFixture("german", "heading-order.html");
+  const errors = headingOrderRule(html, "german/heading-order.html", { lang: "de" });
+  
+  assertEqual(errors.length, 1, "Should find 1 heading order error");
+  assertEqual(errors[0].type, "heading-order", "Error type should be heading-order");
+  assert(errors[0].message.includes("folgt auf"), "Message should be in German");
+});
+
+test("german/empty-links.html: detects empty links in German", () => {
+  const html = readFixture("german", "empty-links.html");
+  const errors = emptyLinksRule(html, "german/empty-links.html", { lang: "de" });
+  
+  assert(errors.length >= 2, "Should find at least 2 empty link errors");
+});
+
+test("german/empty-links.html: German error message", () => {
+  const html = '<html lang="de"><body><a></a></body></html>';
+  const errors = emptyLinksRule(html, "test.html", { lang: "de" });
+  
+  assertEqual(errors.length, 1, "Should find 1 empty link error");
+  assertEqual(errors[0].message, "<a>-Tag ist leer oder hat keinen href/Text", 
+    "Message should be in German");
+});
+
+test("german/labels-forms.html: detects label without for in German", () => {
+  const html = readFixture("german", "labels-forms.html");
+  const errors = labelsWithoutForRule(html, "german/labels-forms.html", { lang: "de" });
+  
+  assert(errors.length >= 1, "Should find at least 1 label error");
+});
+
+test("german/labels-forms.html: German error message for label", () => {
+  const html = '<html lang="de"><body><label>Test</label></body></html>';
+  const errors = labelsWithoutForRule(html, "test.html", { lang: "de" });
+  
+  assertEqual(errors.length, 1, "Should find 1 label error");
+  assertEqual(errors[0].message, 
+    "<label> ist nicht mit einem Formular-Element verknüpft (fehlendes 'for' oder verschachteltes Input)",
+    "Message should be in German");
+});
+
+test("german/aria-labels.html: detects empty aria-label in German", () => {
+  const html = readFixture("german", "aria-labels.html");
+  const errors = ariaLabelsRule(html, "german/aria-labels.html", { lang: "de" });
+  
+  assert(errors.length >= 1, "Should find at least 1 aria error");
+});
+
+test("german/aria-labels.html: German error message for empty aria-label", () => {
+  const html = '<html lang="de"><body><button aria-label=""></button></body></html>';
+  const errors = ariaLabelsRule(html, "test.html", { lang: "de" });
+  
+  assertEqual(errors.length, 1, "Should find 1 aria error");
+  assertEqual(errors[0].type, "aria-invalid", "Error type should be aria-invalid");
+  assertEqual(errors[0].message, "aria-label ist leer", 
+    "Message should be in German");
+});
+
+test("german/aria-labels.html: German error for invalid aria-labelledby ref", () => {
+  const html = '<html lang="de"><body><button aria-labelledby="nonexistent"></button></body></html>';
+  const errors = ariaLabelsRule(html, "test.html", { lang: "de" });
+  
+  assertEqual(errors.length, 1, "Should find 1 aria error");
+  assertEqual(errors[0].type, "aria-invalid", "Error type should be aria-invalid");
+  assert(errors[0].message.includes("referenziert eine nicht vorhandene ID"), 
+    "Message should be in German");
+});
+
+test("german/iframe-titles.html: detects missing iframe title in German", () => {
+  const html = readFixture("german", "iframe-titles.html");
+  const errors = iframeTitlesRule(html, "german/iframe-titles.html", { lang: "de" });
+  
+  assert(errors.length >= 3, "Should find at least 3 iframe title errors");
+});
+
+test("german/iframe-titles.html: German error message for missing title", () => {
+  const html = '<html lang="de"><body><iframe src="test.html"></iframe></body></html>';
+  const errors = iframeTitlesRule(html, "test.html", { lang: "de" });
+  
+  assertEqual(errors.length, 1, "Should find 1 iframe error");
+  assertEqual(errors[0].type, "iframe-title-missing", "Error type should be iframe-title-missing");
+  assertEqual(errors[0].message, 
+    "<iframe> hat kein nicht-leeres 'title'-Attribut zur Beschreibung des Inhalts",
+    "Message should be in German");
+});
+
+test("german/heading-empty.html: detects empty headings in German", () => {
+  const html = readFixture("german", "heading-empty.html");
+  const errors = headingEmptyRule(html, "german/heading-empty.html", { lang: "de" });
+  
+  assertEqual(errors.length, 3, "Should find 3 empty heading errors (h2, h3, h4)");
+});
+
+test("german/heading-empty.html: German error message for empty heading", () => {
+  const html = '<html lang="de"><body><h2></h2></body></html>';
+  const errors = headingEmptyRule(html, "test.html", { lang: "de" });
+  
+  assertEqual(errors.length, 1, "Should find 1 empty heading error");
+  assertEqual(errors[0].type, "heading-empty", "Error type should be heading-empty");
+  assertEqual(errors[0].message, "<h2>-Element ist leer oder enthält nur Leerzeichen",
+    "Message should be in German");
+});
+
+test("german/contrast.html: detects low contrast in German", () => {
+  const html = readFixture("german", "contrast.html");
+  const errors = contrastRule(html, "german/contrast.html", { lang: "de" });
+  
+  assert(errors.length >= 2, "Should find at least 2 contrast errors");
+});
+
+test("german/contrast.html: German error message for contrast", () => {
+  const html = '<html lang="de"><body><p style="color: white; background-color: #eee;">Text</p></body></html>';
+  const errors = contrastRule(html, "test.html", { lang: "de" });
+  
+  assert(errors.length >= 1, "Should find at least 1 contrast error");
+  const contrastError = errors.find(e => e.type === "contrast");
+  assert(contrastError !== undefined, "Should find contrast error");
+  assert(contrastError.message.includes("Kontrastverhältnis"), 
+    "Message should be in German");
+});
+
+test("german/multiple-h1.html: detects multiple h1 in German", () => {
+  const html = readFixture("german", "multiple-h1.html");
+  const errors = multipleH1Rule(html, "german/multiple-h1.html", { lang: "de" });
+  
+  assertEqual(errors.length, 3, "Should find 3 multiple h1 errors");
+});
+
+test("german/multiple-h1.html: German error message for multiple h1", () => {
+  const html = '<html lang="de"><body><h1>A</h1><h1>B</h1></body></html>';
+  const errors = multipleH1Rule(html, "test.html", { lang: "de" });
+  
+  assertEqual(errors.length, 2, "Should find 2 multiple h1 errors");
+  assertEqual(errors[0].type, "multiple-h1", "Error type should be multiple-h1");
+  assert(errors[0].message.includes("Mehrere"), "Message should be in German");
+});
+
 // ============================================
 // Test 3: Edge Cases
 // ============================================
+
 console.log("\n--- Testing Edge Cases ---\n");
 
 // Test no lang attribute (should default to English)

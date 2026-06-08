@@ -21,7 +21,7 @@ module.exports = function ariaLabels(content, file, config = { lang: "en" }) {
     const tagIndex = content.indexOf(html);
     const lineNumber = getLineNumber(content, tagIndex);
 
-    if ($(el).attr("aria-label") && $(el).attr("aria-label").trim() === "") {
+    if ($(el).attr("aria-label") !== undefined && $(el).attr("aria-label").trim() === "") {
       errors.push({
         file,
         line: lineNumber,
