@@ -30,7 +30,8 @@ module.exports.register = function (runner) {
 
   runner.addTest("integration: configuration loads correctly", () => {
     const config = require("../../src/utils/configuration");
-    const loaded = config("../../a11y.config.json");
+    const path = require("path");
+    const loaded = config(path.join(__dirname, "../../a11y.config.json"));
     
     runner.assert(
       loaded !== null && loaded !== undefined,
@@ -105,11 +106,15 @@ module.exports.register = function (runner) {
 <html lang="en">
 <head><title>Test</title></head>
 <body>
-  <img src="image.jpg" alt="">
+  <img src="image.jpg">
   <a href="https://example.com" target="_blank">Link without warning</a>
 </body>
 </html>
     `;
+    // Create temp directory if it doesn't exist
+    if (!fs.existsSync(testDir)) {
+      fs.mkdirSync(testDir, { recursive: true });
+    }
     const testFile = path.join(testDir, "english.html");
     fs.writeFileSync(testFile, htmlContent, "utf-8");
 
@@ -147,11 +152,15 @@ module.exports.register = function (runner) {
 <html lang="de">
 <head><title>Test</title></head>
 <body>
-  <img src="bild.jpg" alt="">
+  <img src="bild.jpg">
   <a href="https://beispiel.de" target="_blank">Link ohne Hinweis</a>
 </body>
 </html>
     `;
+    // Create temp directory if it doesn't exist
+    if (!fs.existsSync(testDir)) {
+      fs.mkdirSync(testDir, { recursive: true });
+    }
     const testFile = path.join(testDir, "german.html");
     fs.writeFileSync(testFile, htmlContent, "utf-8");
 

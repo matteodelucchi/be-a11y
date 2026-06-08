@@ -52,7 +52,8 @@ module.exports.register = function (runner) {
 
   runner.addTest("config: loads from file with defaults", () => {
     const config = require("../../src/utils/configuration");
-    const loaded = config("../../a11y.config.json");
+    const path = require("path");
+    const loaded = config(path.join(__dirname, "../../a11y.config.json"));
     
     runner.assert(
       loaded.rules !== undefined,
@@ -70,7 +71,8 @@ module.exports.register = function (runner) {
 
   runner.addTest("config: merges user config with defaults", () => {
     const config = require("../../src/utils/configuration");
-    const loaded = config("../../a11y.config.json");
+    const path = require("path");
+    const loaded = config(path.join(__dirname, "../../a11y.config.json"));
     
     // The config file should have rules defined
     runner.assert(

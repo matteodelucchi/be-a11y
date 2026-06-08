@@ -51,6 +51,7 @@
     "application",
     "article",
     "blockquote",
+    "button",
     "caption",
     "cell",
     "code",
@@ -84,6 +85,7 @@
     "superscript",
     "table",
     "term",
+    "textbox",
     "time",
     "toolbar",
     "tooltip"
