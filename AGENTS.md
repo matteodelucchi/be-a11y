@@ -12,8 +12,8 @@ be-a11y/
 ├── a11y.config.json  # Rules & config
 ├── action.yml        # GitHub Action
 ├── src/
-│   ├── rules/        # 14 check modules
-│   └── utils/        # config, logger, helpers
+│   ├── rules/        # 15 check modules
+│   └── utils/        # config, logger, i18n, language, helpers
 └── dist/             # ncc bundle
 ```
 
@@ -47,11 +47,66 @@ GitHub Action:
 `a11y.config.json`:
 ```json
 {
-  "rules": { "heading-order": true, "alt-attributes": true, ... },
-  "allowedExtensions": { ".html": true, ".php": true, ".tsx": true, ".twig": true, ".latte": true, ".edge": true, ".jsx": true },
-  "excludedDirs": { "node_modules": true, "dist": true, "vendor": true, "build": true },
-  "newTabNoticePatterns": ["opens in a new tab", "opens in new window"],
-  "allowedAriaRoles": ["application", "article", ...]
+  "language": null,
+  "altMaxLength": 125,
+  "rules": {
+    "heading-order": true,
+    "heading-empty": true,
+    "multiple-h1": true,
+    "alt-attributes": true,
+    "redundant-title": true,
+    "aria-invalid": true,
+    "missing-aria": true,
+    "aria-role-invalid": true,
+    "missing-landmark": false,
+    "contrast": true,
+    "label-missing-for": true,
+    "duplicate-id": true,
+    "input-unlabeled": true,
+    "empty-link": true,
+    "iframe-title-missing": true,
+    "link-new-tab-warning": true
+  },
+  "allowedExtensions": {
+    ".html": true,
+    ".php": true,
+    ".tsx": true,
+    ".twig": true,
+    ".latte": true,
+    ".edge": true,
+    ".jsx": true
+  },
+  "excludedDirs": {
+    "node_modules": true,
+    "dist": true,
+    "vendor": true,
+    "build": true
+  },
+  "excludedFiles": {
+    "package-lock.json": true
+  },
+  "newTabNoticePatterns": [
+    "opens in a new tab",
+    "opens in new tab",
+    "opens in new window",
+    "opens in a new window",
+    "öffnet in neuem Tab",
+    "öffnet in neuem Fenster",
+    "wird in neuem Tab geöffnet",
+    "wird in neuem Fenster geöffnet",
+    "externer Link",
+    "neuer Tab",
+    "neues Fenster"
+  ],
+  "allowedAriaRoles": [
+    "application", "article", "blockquote", "button", "caption", "cell",
+    "code", "columnheader", "definition", "deletion", "directory",
+    "document", "emphasis", "feed", "figure", "generic", "group",
+    "heading", "insertion", "img", "list", "listitem", "mark",
+    "math", "none", "note", "presentation", "paragraph", "row",
+    "rowgroup", "rowheader", "separator", "strong", "subscript",
+    "superscript", "table", "term", "textbox", "time", "toolbar", "tooltip"
+  ]
 }
 ```
 
@@ -59,16 +114,35 @@ All rules enabled by default unless `false`.
 
 ---
 
-## Rules (14)
+## Rules (15)
 
 | Category | Rules | Purpose |
 |----------|-------|---------|
-| Headings | `heading-order`, `heading-empty`, `multiple-h1` | Validate hierarchy |
-| Images | `alt-attributes` | Check alt: missing, empty, long, decorative, functional, redundant |
+| Headings | `heading-order`, `heading-empty`, `multiple-h1` | Validate hierarchy and content |
+| Images | `alt-attributes`, `alt-empty`, `alt-too-long`, `alt-decorative-incorrect`, `alt-functional-empty`, `redundant-title` | Check alt text: missing, empty, long, decorative, functional, redundant |
 | ARIA | `aria-invalid`, `missing-aria`, `aria-role-invalid`, `missing-landmark` | ARIA validation |
 | Forms | `label-missing-for`, `input-unlabeled` | Form accessibility |
-| Links | `empty-link`, `link-new-tab-warning` | Link validation |
-| Other | `contrast`, `iframe-title-missing` | Contrast & iframes |
+| Links | `empty-link`, `link-new-tab-warning`, `duplicate-id` | Link and ID validation |
+| Other | `contrast`, `iframe-title-missing` | Color contrast & iframe titles |
+
+---
+
+## Internationalization (i18n)
+
+### Supported Languages
+- **English (en)** - Default language
+- **German (de)** - Full translation support
+
+### Language Detection
+- Automatically detects HTML `lang` attribute
+- Checks `xml:lang` attribute
+- Checks meta tags (`content-language`, `language`)
+- Can be overridden via `language` config option
+
+### Message Files
+- `src/utils/i18n.js` - Contains all localized messages
+- `src/utils/language.js` - Language detection logic
+- Falls back to English if language not supported
 
 ---
 
@@ -106,7 +180,7 @@ module.exports = function name(content, file, config = {}) {
 ### Integration
 1. Create `src/rules/name.js`
 2. Add `require` to `index.js`
-3. Add to `analyzeContent()` calls
+3. Add to `analyzeContent()` calls (both remote and local)
 4. Add to `a11y.config.json` rules
 5. Add label in `src/utils/logger.js` typeLabels
 
@@ -116,6 +190,7 @@ module.exports = function name(content, file, config = {}) {
 
 - WCAG 2.1 AA baseline (covers 1.1.1, 1.3.1, 1.4.3, 2.4.6, 3.3.2, 4.1.2)
 - EAA (European Accessibility Act) aware
+- EN 301 549 compliant
 
 ---
 
@@ -132,7 +207,8 @@ module.exports = function name(content, file, config = {}) {
 - 2-space indentation
 - JSDoc for exports
 - Use chalk, not console.log
-- cheerio for all DOM ops
+- cheerio for all DOM operations
+- Follow existing patterns for rule development
 
 ---
 
@@ -146,4 +222,4 @@ module.exports = function name(content, file, config = {}) {
 
 ---
 
-*Generated: 2026-06-06*
+*Generated: 2026-06-08*
