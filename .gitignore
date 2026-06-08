@@ -17,3 +17,6 @@ CHANGELOG.md.tmp
 # Release artifacts
 *.zip
 *.tar.gz
+
+# Test scripts
+test-workflows.sh

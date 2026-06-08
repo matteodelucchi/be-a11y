@@ -15,16 +15,22 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🟢 Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"
 
       - name: 📦 Install dependencies
-        run: npm install
+        run: npm ci || npm install
 
       - name: 🔍 Run Accessibility Checker
         run: |
-          node index.js ./public > output.txt || true
+          # Check if public directory exists, otherwise check current directory
+          if [ -d "./public" ]; then
+            TARGET="./public"
+          else
+            TARGET="."
+          fi
+          node index.js $TARGET > output.txt || true
           cat output.txt
           grep "🚨 Accessibility Issues Found" output.txt && exit 1 || echo "No critical issues."
 
