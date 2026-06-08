@@ -1,0 +1,22 @@
+# Code Owners for be-a11y
+
+# Default: All files are owned by Matteo Delucchi
+* @matteodelucchi
+
+# Documentation can be updated by anyone with write access
+*.md @matteodelucchi
+
+# GitHub Actions workflows
+.github/workflows/* @matteodelucchi
+
+# Source code
+src/ @matteodelucchi
+index.js @matteodelucchi
+
+# Tests
+__tests__/ @matteodelucchi
+test/ @matteodelucchi
+
+# Configuration
+a11y.config.json @matteodelucchi
+package.json @matteodelucchi

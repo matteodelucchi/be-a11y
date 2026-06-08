@@ -25,6 +25,10 @@
     "test:integration": "jest --testPathPattern=integration",
     "build": "ncc build index.js -o dist",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -w",
+    "lint": "eslint src/ index.js",
+    "lint:fix": "eslint src/ index.js --fix",
+    "lint:all": "eslint src/ index.js __tests__/ *.js",
+    "lint:all-fix": "eslint src/ index.js __tests__/ *.js --fix",
     "lint:commits": "commitlint --from=HEAD~1"
   },
   "dependencies": {
@@ -47,6 +51,11 @@
     "@vercel/ncc": "^0.38.3",
     "commitlint": "^17.8.1",
     "conventional-changelog": "^5.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^16.6.1",
+    "eslint-plugin-promise": "^6.1.0",
     "jest": "^29.7.0"
   }
 }
