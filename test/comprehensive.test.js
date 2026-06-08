@@ -249,7 +249,7 @@ test("german/labels-forms.html: German error message for label", () => {
   
   assertEqual(errors.length, 1, "Should find 1 label error");
   assertEqual(errors[0].message, 
-    "<label> ist nicht mit einem Formular-Element verknüpft (fehlendes 'for' oder verschachteltes Input)",
+    "<label> ist nicht mit einem Formularelement verknüpft (fehlendes 'for'-Attribut oder verschachteltes Input)",
     "Message should be in German");
 });
 
@@ -266,7 +266,7 @@ test("german/aria-labels.html: German error message for empty aria-label", () =>
   
   assertEqual(errors.length, 1, "Should find 1 aria error");
   assertEqual(errors[0].type, "aria-invalid", "Error type should be aria-invalid");
-  assertEqual(errors[0].message, "aria-label ist leer", 
+  assertEqual(errors[0].message, "aria-label darf nicht leer sein", 
     "Message should be in German");
 });
 

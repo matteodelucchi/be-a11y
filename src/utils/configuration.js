@@ -18,6 +18,11 @@ const DEFAULTS = {
     "opens in a new window",
     "öffnet in neuem Tab",
     "öffnet in neuem Fenster",
+    "wird in neuem Tab geöffnet",
+    "wird in neuem Fenster geöffnet",
+    "externer Link",
+    "neuer Tab",
+    "neues Fenster",
   ],
   allowedAriaRoles: [
     "application",

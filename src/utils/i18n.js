@@ -49,7 +49,7 @@ const messages = {
     "redundant-title": "<img> hat ein 'title'-Attribut, das den 'alt'-Text dupliziert: \"{alt}\"",
     
     // ARIA
-    "aria-invalid": "aria-label ist leer",
+    "aria-invalid": "aria-label darf nicht leer sein",
     "aria-invalid-ref": "aria-labelledby referenziert eine nicht vorhandene ID: {id}",
     "aria-role-invalid": "Nicht anerkannte oder unangemessene ARIA-Rolle: \"{role}\"",
     "missing-aria": "<{tag}>-Element sollte ein aria-label oder sichtbaren Text haben",
@@ -60,7 +60,7 @@ const messages = {
     "multiple-h1": "Mehrere <h1>-Tags gefunden ({count} insgesamt)",
     
     // Forms
-    "label-missing-for": "<label> ist nicht mit einem Formular-Element verknüpft (fehlendes 'for' oder verschachteltes Input)",
+    "label-missing-for": "<label> ist nicht mit einem Formularelement verknüpft (fehlendes 'for'-Attribut oder verschachteltes Input)",
     "label-for-missing": '<label for="{forAttr}"> findet kein Element mit dieser ID',
     "input-unlabeled": '<input type="{type}"> ist nicht mit einem Label verknüpft',
     

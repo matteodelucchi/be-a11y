@@ -76,30 +76,6 @@ function detectLanguage(content) {
       }
     }
 
-    // Check for common German text patterns as fallback
-    // This is a heuristic and should not be relied upon exclusively
-    const lowerContent = content.toLowerCase();
-    const germanIndicators = [
-      "der", "die", "das", "den", "dem", "des",
-      "und", "oder", "aber", "denn", "weil",
-      "der", "ein", "eine", "einen",
-      "öffnet in neuem tab", "öffnet in neuem fenster",
-      "barrierefreiheit", "zugänglichkeit",
-    ];
-    
-    const englishIndicators = [
-      "the", "and", "or", "but", "because",
-      "opens in a new tab", "opens in new window",
-      "accessibility",
-    ];
-
-    const hasGerman = germanIndicators.some(indicator => lowerContent.includes(indicator));
-    const hasEnglish = englishIndicators.some(indicator => lowerContent.includes(indicator));
-
-    if (hasGerman && !hasEnglish) {
-      return "de";
-    }
-
   } catch (error) {
     // If parsing fails, return default
     console.warn(`Language detection failed: ${error.message}`);
