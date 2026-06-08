@@ -22,8 +22,32 @@ module.exports = function emptyLinks(content, file, config = { lang: "en" }) {
     const html = $.html(el);
     const tagIndex = content.indexOf(html);
     const lineNumber = getLineNumber(content, tagIndex);
+    const ariaLabel = $el.attr("aria-label");
+    const ariaLabelledBy = $el.attr("aria-labelledby");
 
-    if ((!href || href === "#") && !text) {
+    // Check if link has meaningful content:
+    // - Visible text
+    // - aria-label attribute
+    // - aria-labelledby attribute
+    // - Image with non-empty alt text
+    const hasImageWithAlt = $el.find("img[alt]:not([alt=''])").length > 0;
+    const hasMeaningfulContent = text || ariaLabel || ariaLabelledBy || hasImageWithAlt;
+
+    // Link is empty if:
+    // - No href or href is just "#" (placeholder)
+    // - No meaningful content (text, aria, or image with alt)
+    if ((!href || href === "#") && !hasMeaningfulContent) {
+      errors.push({
+        file,
+        line: lineNumber,
+        type: "empty-link",
+        message: getMessage("empty-link", lang),
+      });
+    }
+
+    // Also flag links with href that have no meaningful content
+    // (e.g., <a href="page.html"><img src="icon.png" alt=""></a>)
+    if (href && href !== "#" && !hasMeaningfulContent) {
       errors.push({
         file,
         line: lineNumber,

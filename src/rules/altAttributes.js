@@ -29,8 +29,17 @@ module.exports = function altAttributes(content, file, config = { rules: {}, lan
 
     const alt = $el.attr("alt");
     const role = $el.attr("role");
+    const ariaHidden = $el.attr("aria-hidden");
+    
+    // Check if image is decorative:
+    // - role="presentation" or role="none"
+    // - aria-hidden="true"
+    // - empty alt attribute (alt="")
     const isDecorative =
-      role === "presentation" || role === "none" || alt === "";
+      role === "presentation" || 
+      role === "none" || 
+      ariaHidden === "true" ||
+      alt === "";
     const isInLinkOrButton = $el.parents("a, button").length > 0;
 
     // Case 1: Missing alt attribute entirely
