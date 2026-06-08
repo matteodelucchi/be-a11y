@@ -1,3 +1,19 @@
 node_modules
 package-lock.json
 .DS_Store
+
+# Build output
+dist/
+
+# Test coverage
+coverage/
+
+# Jest cache
+.jest-cache/
+
+# CHANGELOG temporary files
+CHANGELOG.md.tmp
+
+# Release artifacts
+*.zip
+*.tar.gz

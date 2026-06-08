@@ -1,0 +1,81 @@
+name: Accessibility Gate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  accessibility-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run accessibility checks
+        run: |
+          # Create a temporary directory for test HTML files
+          mkdir -p /tmp/a11y-test
+          
+          # Create a sample HTML file with common accessibility issues
+          cat > /tmp/a11y-test/test.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <title>Test Page</title>
+          </head>
+          <body>
+            <h1>Test Page</h1>
+            <img src="test.jpg" alt="Test image">
+            <a href="#">Link with text</a>
+            <button>Click me</button>
+          </body>
+          </html>
+          EOF
+          
+          # Run be-a11y on the test file
+          node index.js /tmp/a11y-test > /tmp/a11y-gate-report.txt 2>&1 || true
+          
+          # Output the report
+          cat /tmp/a11y-gate-report.txt
+
+      - name: Check for critical issues
+        id: check-issues
+        run: |
+          if grep -q "🚨 Accessibility Issues Found" /tmp/a11y-gate-report.txt; then
+            echo "has_issues=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_issues=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fail if critical issues found
+        if: steps.check-issues.outputs.has_issues == 'true'
+        run: |
+          echo "::error:: Critical accessibility issues found!"
+          echo "Please fix the accessibility issues before merging."
+          exit 1
+
+      - name: Success
+        if: steps.check-issues.outputs.has_issues == 'false'
+        run: |
+          echo "✅ All accessibility checks passed!"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: accessibility-gate-report
+          path: /tmp/a11y-gate-report.txt
+          retention-days: 7

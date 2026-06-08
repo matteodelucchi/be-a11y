@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG=${{ github.ref_name }}
+          # Remove leading 'v' if present
+          VERSION=${TAG#v}
+          echo "Extracted version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Validate version format
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          # Check if version matches semantic versioning pattern
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+\.[0-9]+)?$ ]]; then
+            echo "Error: Invalid version format: $VERSION"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build artifacts
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          if [ ! -f "dist/index.js" ]; then
+            echo "Error: dist/index.js not found"
+            exit 1
+          fi
+          # Test that the built file is valid JavaScript
+          node -e "require('./dist/index.js')" || exit 1
+
+      - name: Generate CHANGELOG
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 ${{ steps.version.outputs.tag }} 2>/dev/null || echo "")
+          
+          if [ -z "$PREV_TAG" ]; then
+            # First release - generate full changelog
+            npx conventional-changelog -p angular -i CHANGELOG.md -w
+          else
+            # Generate changelog since last release
+            npx conventional-changelog -p angular -i CHANGELOG.md -w -r 2 --from $PREV_TAG
+          fi
+
+      - name: Create Release Notes
+        id: release-notes
+        run: |
+          TAG=${{ steps.version.outputs.tag }}
+          PREV_TAG=$(git describe --tags --abbrev=0 $TAG 2>/dev/null || echo "")
+          
+          if [ -z "$PREV_TAG" ]; then
+            # First release
+            NOTES=$(cat CHANGELOG.md 2>/dev/null || echo "Initial release")
+          else
+            # Extract changes since last release
+            NOTES=$(git log --pretty=format:"%s (%h)" $PREV_TAG..HEAD --no-merges 2>/dev/null | head -20 || echo "See CHANGELOG.md")
+          fi
+          
+          # Escape newlines for GitHub Actions
+          NOTES="${NOTES//'%'/'%25'}"
+          NOTES="${NOTES//$'\n'/'%0A'}"
+          NOTES="${NOTES//$'\r'/'%0D'}"
+          
+          echo "notes=$NOTES" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ steps.version.outputs.tag }}
+          body: ${{ steps.release-notes.outputs.notes }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-beta.') || contains(github.ref_name, '-rc.') || contains(github.ref_name, '-alpha.') }}
+          files: |
+            dist/index.js
+          fail_on_unmatched_files: false
+
+      - name: Upload Release Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: be-a11y-${{ steps.version.outputs.version }}
+          path: dist/
+          retention-days: 90
+
+      - name: Output Release Information
+        run: |
+          echo "✅ Successfully released ${{ steps.version.outputs.tag }}"
+          echo "📦 Artifacts available in GitHub Release"
+          echo "🏷️ GitHub Action will auto-update from tag"
