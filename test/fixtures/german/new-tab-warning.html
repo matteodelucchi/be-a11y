@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Testseite - Neuer Tab Hinweis</title>
+</head>
+<body>
+    <h1>Links</h1>
+    <!-- Fehlender Hinweis -->
+    <a href="https://beispiel.de" target="_blank">Externer Link</a>
+    
+    <!-- Richtig: hat aria-label -->
+    <a href="https://beispiel.de" target="_blank" aria-label="Öffnet in neuem Tab">Externer Link 2</a>
+    
+    <!-- Richtig: hat Screenreader-Text -->
+    <a href="https://beispiel.de" target="_blank">
+        Externer Link 3
+        <span class="sr-only">öffnet in neuem Tab</span>
+    </a>
+    
+    <!-- Richtig: hat sichtbarer Text -->
+    <a href="https://beispiel.de" target="_blank">Externer Link 4 (öffnet in neuem Tab)</a>
+</body>
+</html>

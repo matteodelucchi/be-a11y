@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Page - New Tab Warning</title>
+</head>
+<body>
+    <h1>Links</h1>
+    <!-- Missing warning -->
+    <a href="https://example.com" target="_blank">External Link</a>
+    
+    <!-- Correct: has aria-label -->
+    <a href="https://example.com" target="_blank" aria-label="Opens in a new tab">External Link 2</a>
+    
+    <!-- Correct: has screen reader text -->
+    <a href="https://example.com" target="_blank">
+        External Link 3
+        <span class="sr-only">opens in a new tab</span>
+    </a>
+</body>
+</html>

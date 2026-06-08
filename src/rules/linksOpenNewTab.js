@@ -37,7 +37,9 @@ module.exports = function linksOpenNewTab(content, file, config = { lang: "en" }
 
     const newTabNoticePatterns = (config.newTabNoticePatterns || [
       "opens in a new tab",
+      "opens in new tab",
       "opens in new window",
+      "opens in a new window",
       "öffnet in neuem Tab",
       "öffnet in neuem Fenster",
     ]).map((pattern) => pattern.toLowerCase());

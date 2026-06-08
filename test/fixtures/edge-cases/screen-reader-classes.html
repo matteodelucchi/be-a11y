@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Page - Screen Reader Classes</title>
+</head>
+<body>
+    <h1>Links with Screen Reader Text</h1>
+    
+    <!-- Using sr-only class -->
+    <a href="https://example.com" target="_blank">
+        Download
+        <span class="sr-only">opens in a new tab</span>
+    </a>
+    
+    <!-- Using visually-hidden class -->
+    <a href="https://example.com" target="_blank">
+        Download
+        <span class="visually-hidden">opens in a new tab</span>
+    </a>
+    
+    <!-- Using screen-reader-only class -->
+    <a href="https://example.com" target="_blank">
+        Download
+        <span class="screen-reader-only">opens in a new tab</span>
+    </a>
+    
+    <!-- Using u-screenReaderOnly class (unicorn utility) -->
+    <a href="https://example.com" target="_blank">
+        Download
+        <span class="u-screenReaderOnly">opens in a new tab</span>
+    </a>
+    
+    <!-- Missing warning - should be flagged -->
+    <a href="https://example.com" target="_blank">Download</a>
+</body>
+</html>

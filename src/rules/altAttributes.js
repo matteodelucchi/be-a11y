@@ -76,7 +76,8 @@ module.exports = function altAttributes(content, file, config = { rules: {}, lan
     }
 
     // Case 4: alt exists but only contains whitespace
-    if (alt.trim() === "") {
+    // Only flag if this is NOT a decorative image (decorative images should have empty alt)
+    if (alt.trim() === "" && !isDecorative) {
       errors.push({
         file,
         line: lineNumber,

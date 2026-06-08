@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Testseite - Dekoratives Bild</title>
+</head>
+<body>
+    <h1>Willkommen</h1>
+    <!-- Richtig: dekoratives Bild mit leerem alt -->
+    <img src="trenner.png" alt="" role="presentation">
+    <!-- Falsch: dekoratives Bild mit nicht-leerem alt -->
+    <img src="trenner2.png" alt="Horizontaler Trenner" role="presentation">
+    <!-- Auch richtig: aria-hidden -->
+    <img src="icon.png" alt="" aria-hidden="true">
+</body>
+</html>

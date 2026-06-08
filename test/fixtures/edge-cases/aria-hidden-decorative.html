@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Page - aria-hidden Decorative</title>
+</head>
+<body>
+    <h1>Test</h1>
+    <!-- Correct: decorative with aria-hidden -->
+    <img src="icon.png" alt="Some icon" aria-hidden="true">
+    
+    <!-- Correct: decorative with role and empty alt -->
+    <img src="icon2.png" alt="" role="presentation">
+    
+    <!-- Incorrect: functional image (in link) with empty alt -->
+    <a href="https://example.com">
+        <img src="logo.png" alt="">
+    </a>
+</body>
+</html>

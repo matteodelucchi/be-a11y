@@ -13,7 +13,9 @@ const DEFAULTS = {
   language: null,
   newTabNoticePatterns: [
     "opens in a new tab",
+    "opens in new tab",
     "opens in new window",
+    "opens in a new window",
     "öffnet in neuem Tab",
     "öffnet in neuem Fenster",
   ],
